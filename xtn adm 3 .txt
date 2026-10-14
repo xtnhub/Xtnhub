@@ -1,0 +1,1670 @@
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local TextChatService = game:GetService("TextChatService")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local Workspace = workspace
+local CoreGui = game:GetService("CoreGui")
+local UserInputService = game:GetService("UserInputService")
+local Lighting = game:GetService("Lighting")
+local HttpService = game:GetService("HttpService")
+
+local DONOS = {
+    ["sehae2073567"] = true,
+    [""] = true,
+    [""] = true,
+}
+
+local SUB_DONOS = {
+    [""] = true,
+    [""] = true,
+}
+
+local OWNER_OF_SLAYER-HUB = {
+    [""] = true,
+}
+
+local MODS = {
+    ["usbhsnbsosb"] = true,
+    ["aqeoguest777"] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+    [""] = true,
+   [""] = true,
+   [""] = true,
+   [""] = true,
+   [""] = true,
+   [""] = true,
+   [""] = true,
+[""] = true,
+ [""] = true,
+   [""] = true,
+[""] = true,
+}
+
+local TEMP_MODS = {}
+local LYRA_USERS = {}
+local playerOriginalSpeed = {}
+local CASTIGO_PLAYERS = {}
+local INVISIBLE_JAILED_PLAYERS = {}
+local LOOP_KILL_PLAYERS = {}
+local LOOP_BRING_PLAYERS = {}
+local LOOP_SIT_PLAYERS = {}
+local LOOP_FIRE_PLAYERS = {}
+
+local function PodeVerJaulas(playerName)
+    return DONOS[playerName] or SUB_DONOS[playerName] or OWNER_OF_DARK_HUB[playerName] or MODS[playerName] or TEMP_MODS[playerName] or LYRA_USERS[playerName]
+end
+
+local function PodeUsarComando(commanderName, targetPlayerName)
+    if DONOS[commanderName] or SUB_DONOS[commanderName] or OWNER_OF_DARK_HUB[commanderName] or MODS[commanderName] or TEMP_MODS[commanderName] then
+        return true
+    end
+    
+    if LYRA_USERS[commanderName] then
+        if LYRA_USERS[targetPlayerName] then
+            return true
+        else
+            return false
+        end
+    end
+    
+    return false
+end
+
+local function TemCargo(playerName)
+    return DONOS[playerName] or SUB_DONOS[playerName] or OWNER_OF_DARK_HUB[playerName] or MODS[playerName] or TEMP_MODS[playerName] or LYRA_USERS[playerName]
+end
+
+local function EImune(playerName)
+    return false
+end
+
+local function GetCargo(playerName)
+    if DONOS[playerName] then return "Dono do Lyra" end
+    if SUB_DONOS[playerName] then return "Subdono do Lyra" end
+    if OWNER_OF_DARK_HUB[playerName] then return "Dark Hub" end
+    if MODS[playerName] then return "Admin do Lyra" end
+    if TEMP_MODS[playerName] then return "Temp Mod" end
+    return ""
+end
+
+local function createSpecialTag(player)
+    if not player then return end
+    
+    local function apply()
+        local char = player.Character
+        if not char then return end
+        local head = char:FindFirstChild("Head")
+        if not head then return end
+
+        local old = head:FindFirstChild("SpecialTag")  
+        if old then old:Destroy() end  
+
+        local gui = Instance.new("BillboardGui")  
+        gui.Name = "SpecialTag"  
+        gui.Size = UDim2.new(0, 200, 0, 50)  
+        gui.StudsOffset = Vector3.new(0, 3, 0)  
+        gui.AlwaysOnTop = true  
+        gui.Adornee = head  
+        gui.Parent = head  
+
+        local text = Instance.new("TextLabel")  
+        text.Size = UDim2.new(1, 0, 1, 0)  
+        text.BackgroundTransparency = 1  
+        text.Font = Enum.Font.GothamBold  
+        text.TextScaled = true  
+        text.TextStrokeTransparency = 0.2  
+        text.TextStrokeColor3 = Color3.new(0,0,0)  
+        
+        local cargo = GetCargo(player.Name)
+        
+        if cargo ~= "" then
+            text.Text = cargo
+        else
+            text.Text = ""
+        end
+        
+          if cargo == "Owner Xtn" then
+            text.TextColor3 = Color3.fromRGB(210, 210, 210)
+        elseif cargo == "Subdono do Xtn" then
+            text.TextColor3 = Color3.fromRGB(210, 210, 210)
+        elseif cargo == "Dono de um hun" then
+            text.TextColor3 = Color3.fromRGB(210, 210, 210)
+        elseif cargo == "Admin do Xtn" then
+            text.TextColor3 = Color3.fromRGB(210, 210, 210)
+        elseif cargo == "Temp Mod" then
+            text.TextColor3 = Color3.fromRGB(210, 210, 210)
+        else
+            text.Text = ""
+        end
+
+        text.Parent = gui  
+    end  
+
+    pcall(apply)  
+    player.CharacterAdded:Connect(function()  
+        task.wait(0.4)  
+        pcall(apply)  
+    end)
+end
+
+for _, p in pairs(Players:GetPlayers()) do
+    createSpecialTag(p)
+end
+
+Players.PlayerAdded:Connect(function(p)
+    createSpecialTag(p)
+end)
+
+local function KillPlayer(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character then return false end
+    local humanoid = targetPlayer.Character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid.Health = 0
+        return true
+    end
+    return false
+end
+
+local function KickPlayer(targetPlayer, reason)
+    if not targetPlayer then return false end
+    
+    local success = pcall(function()
+        targetPlayer:Kick(reason or "Você foi expulso pela equipe")
+    end)
+    
+    if not success then
+        if targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            targetPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0, 1000000, 0)
+        end
+        
+        task.spawn(function()
+            for i = 1, 10 do
+                if targetPlayer.Character then
+                    targetPlayer.Character:BreakJoints()
+                end
+                task.wait(0.5)
+            end
+        end)
+    end
+    
+    return true
+end
+
+local function EnviarComando(comando, alvo)
+    local canal = TextChatService.TextChannels:FindFirstChild("RBXGeneral") or TextChatService.TextChannels:GetChildren()[1]
+    if canal then
+        canal:SendAsync("/" .. comando .. " " .. (alvo or ""))
+    end
+end
+
+local function AtualizarTagPorNome(nome)
+    local p = Players:FindFirstChild(nome)
+    if p then
+        createSpecialTag(p)
+    end
+end
+
+local function InvisibleJailPlayer(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character then return false end
+    
+    if INVISIBLE_JAILED_PLAYERS[targetPlayer.Name] then
+        local jailData = INVISIBLE_JAILED_PLAYERS[targetPlayer.Name]
+        if jailData.jailModel and jailData.jailModel.Parent then
+            jailData.jailModel:Destroy()
+        end
+        if jailData.loop then
+            task.cancel(jailData.loop)
+        end
+    end
+    
+    local hrp = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return false end
+    
+    local originalPosition = hrp.Position
+    INVISIBLE_JAILED_PLAYERS[targetPlayer.Name] = {
+        originalPosition = originalPosition,
+        jailModel = nil,
+        loop = nil
+    }
+    
+    local jailPosition = hrp.Position
+    local jailSize = 8
+    
+    local jailModel = Instance.new("Model", Workspace)
+    jailModel.Name = "InvisibleJail_" .. targetPlayer.Name
+    
+    local parts = {
+        Base = Instance.new("Part", jailModel),
+        Roof = Instance.new("Part", jailModel),
+        Wall1 = Instance.new("Part", jailModel),
+        Wall2 = Instance.new("Part", jailModel),
+        Wall3 = Instance.new("Part", jailModel),
+        Wall4 = Instance.new("Part", jailModel)
+    }
+    
+    parts.Base.Size = Vector3.new(jailSize, 0.5, jailSize)
+    parts.Base.Position = jailPosition - Vector3.new(0, 3, 0)
+    parts.Base.Anchored = true
+    parts.Base.CanCollide = true
+    parts.Base.Material = Enum.Material.Plastic
+    parts.Base.Color = Color3.fromRGB(255, 255, 255)
+    parts.Base.Transparency = 1
+    parts.Base.CastShadow = false
+    
+    parts.Roof.Size = Vector3.new(jailSize, 0.5, jailSize)
+    parts.Roof.Position = parts.Base.Position + Vector3.new(0, jailSize, 0)
+    parts.Roof.Anchored = true
+    parts.Roof.CanCollide = true
+    parts.Roof.Material = Enum.Material.Plastic
+    parts.Roof.Color = Color3.fromRGB(255, 255, 255)
+    parts.Roof.Transparency = 1
+    parts.Roof.CastShadow = false
+    
+    local wallConfigs = {
+        { 
+            size = Vector3.new(0.5, jailSize, jailSize),
+            position = parts.Base.Position + Vector3.new(jailSize / 2, jailSize / 2, 0)
+        },
+        { 
+            size = Vector3.new(0.5, jailSize, jailSize),
+            position = parts.Base.Position + Vector3.new(-jailSize / 2, jailSize / 2, 0)
+        },
+        { 
+            size = Vector3.new(jailSize, jailSize, 0.5),
+            position = parts.Base.Position + Vector3.new(0, jailSize / 2, jailSize / 2)
+        },
+        { 
+            size = Vector3.new(jailSize, jailSize, 0.5),
+            position = parts.Base.Position + Vector3.new(0, jailSize / 2, -jailSize / 2)
+        }
+    }
+    
+    for i, config in ipairs(wallConfigs) do
+        local wall = parts["Wall" .. i]
+        wall.Size = config.size
+        wall.Position = config.position
+        wall.Anchored = true
+        wall.CanCollide = true
+        wall.Material = Enum.Material.Plastic
+        wall.Color = Color3.fromRGB(255, 255, 255)
+        wall.Transparency = 1
+        wall.CastShadow = false
+    end
+    
+    local centerPosition = parts.Base.Position + Vector3.new(0, jailSize / 2, 0)
+    hrp.CFrame = CFrame.new(centerPosition)
+    
+    local monitorLoop = task.spawn(function()
+        local center = parts.Base.Position + Vector3.new(0, jailSize / 2, 0)
+        while INVISIBLE_JAILED_PLAYERS[targetPlayer.Name] and targetPlayer.Parent and targetPlayer.Character and targetPlayer.Character.Parent do
+            local currentHrp = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if currentHrp and (currentHrp.Position - center).Magnitude > (jailSize / 2) - 1 then
+                currentHrp.CFrame = CFrame.new(center)
+            end
+            task.wait(0.1)
+        end
+    end)
+    
+    INVISIBLE_JAILED_PLAYERS[targetPlayer.Name].jailModel = jailModel
+    INVISIBLE_JAILED_PLAYERS[targetPlayer.Name].loop = monitorLoop
+    
+    return true
+end
+
+local function InvisibleUnjailPlayer(targetPlayer)
+    if not targetPlayer or not INVISIBLE_JAILED_PLAYERS[targetPlayer.Name] then return false end
+    
+    local jailData = INVISIBLE_JAILED_PLAYERS[targetPlayer.Name]
+    
+    if jailData.jailModel and jailData.jailModel.Parent then
+        jailData.jailModel:Destroy()
+    end
+    
+    if jailData.loop then
+        task.cancel(jailData.loop)
+    end
+    
+    if targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        targetPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(jailData.originalPosition)
+    end
+    
+    INVISIBLE_JAILED_PLAYERS[targetPlayer.Name] = nil
+    
+    return true
+end
+
+local function ExplodirPlayer(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character then return false end
+    
+    local character = targetPlayer.Character
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    
+    if not humanoidRootPart then return false end
+    
+    local explosion = Instance.new("Explosion")
+    explosion.Position = humanoidRootPart.Position
+    explosion.BlastPressure = 500000
+    explosion.BlastRadius = 10
+    explosion.DestroyJointRadiusPercent = 0
+    explosion.Parent = Workspace
+    
+    for i = 1, 8 do
+        local part = Instance.new("Part")
+        part.Size = Vector3.new(2, 2, 2)
+        part.Position = humanoidRootPart.Position + Vector3.new(math.random(-8, 8), math.random(0, 12), math.random(-8, 8))
+        part.Anchored = false
+        part.CanCollide = false
+        part.Material = Enum.Material.Neon
+        part.Color = Color3.fromRGB(100, 100, 255)
+        part.Parent = Workspace
+        
+        local bodyVelocity = Instance.new("BodyVelocity")
+        bodyVelocity.Velocity = Vector3.new(math.random(-80, 80), math.random(30, 100), math.random(-80, 80))
+        bodyVelocity.MaxForce = Vector3.new(1e5, 1e5, 1e5)
+        bodyVelocity.Parent = part
+        
+        game:GetService("Debris"):AddItem(part, 3)
+    end
+    
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid.Health = 0
+    end
+    
+    return true
+end
+
+local function BringPlayer(targetPlayer, commander)
+    if not targetPlayer or not targetPlayer.Character then return false end
+    if not commander or not commander.Character then return false end
+    
+    local targetHrp = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+    local commanderHrp = commander.Character:FindFirstChild("HumanoidRootPart")
+    
+    if not targetHrp or not commanderHrp then return false end
+    
+    local bringOffset = CFrame.new(0, 0, -5)
+    targetHrp.CFrame = commanderHrp.CFrame * bringOffset
+    
+    return true
+end
+
+local function LoopKillPlayer(targetPlayer)
+    if not targetPlayer then return false end
+    LOOP_KILL_PLAYERS[targetPlayer.Name] = true
+    
+    local function killLoop()
+        while LOOP_KILL_PLAYERS[targetPlayer.Name] and targetPlayer and targetPlayer.Parent do
+            if targetPlayer.Character then
+                local humanoid = targetPlayer.Character:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    humanoid.Health = 0
+                end
+            end
+            task.wait(1)
+        end
+    end
+    
+    task.spawn(killLoop)
+    return true
+end
+
+local function UnloopKillPlayer(targetPlayer)
+    if not targetPlayer then return false end
+    LOOP_KILL_PLAYERS[targetPlayer.Name] = nil
+    return true
+end
+
+local function LoopBringPlayer(targetPlayer, commander)
+    if not targetPlayer or not commander then return false end
+    LOOP_BRING_PLAYERS[targetPlayer.Name] = true
+    
+    local function bringLoop()
+        while LOOP_BRING_PLAYERS[targetPlayer.Name] and targetPlayer and targetPlayer.Parent and commander and commander.Parent do
+            if targetPlayer.Character and commander.Character then
+                local targetHrp = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+                local commanderHrp = commander.Character:FindFirstChild("HumanoidRootPart")
+                
+                if targetHrp and commanderHrp then
+                    local bringOffset = CFrame.new(0, 0, -5)
+                    targetHrp.CFrame = commanderHrp.CFrame * bringOffset
+                end
+            end
+            task.wait(0.5)
+        end
+    end
+    
+    task.spawn(bringLoop)
+    return true
+end
+
+local function UnloopBringPlayer(targetPlayer)
+    if not targetPlayer then return false end
+    LOOP_BRING_PLAYERS[targetPlayer.Name] = nil
+    return true
+end
+
+local function TPTrollPlayer(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character then return false end
+    local hrp = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return false end
+    
+    local originalPosition = hrp.Position
+    
+    local trollPosition = Vector3.new(799, -9, 482)
+    hrp.CFrame = CFrame.new(trollPosition)
+    
+    task.delay(3, function()
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            targetPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(originalPosition)
+        end
+    end)
+    
+    return true
+end
+
+local function FloatPlayer(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character or not targetPlayer.Character:FindFirstChild("HumanoidRootPart") or not targetPlayer.Character:FindFirstChildOfClass("Humanoid") then return false end
+    local targetHrp = targetPlayer.Character.HumanoidRootPart
+    local targetHumanoid = targetPlayer.Character:FindFirstChildOfClass("Humanoid")
+    local targetPos = targetHrp.Position
+    targetHumanoid.WalkSpeed = 0
+    targetHumanoid.JumpHeight = 0
+
+    local bodyVelocity = Instance.new("BodyVelocity", targetHrp)
+    bodyVelocity.MaxForce = Vector3.new(0, math.huge, 0)
+    bodyVelocity.Velocity = Vector3.new(0, 10, 0)
+    bodyVelocity.Name = "FloatVelocity"
+
+    local maxHeight = targetPos.Y + 50
+    local connection
+    connection = RunService.Heartbeat:Connect(function()
+        if not targetPlayer.Character or not targetPlayer.Character.Parent or not targetHrp.Parent or not targetHumanoid.Parent then
+            if bodyVelocity and bodyVelocity.Parent then bodyVelocity:Destroy() end
+            if connection then connection:Disconnect() end
+            return
+        end
+        if targetHrp.Position.Y >= maxHeight then
+            if bodyVelocity and bodyVelocity.Parent then bodyVelocity:Destroy() end
+            if connection then connection:Disconnect() end
+            targetHumanoid.Health = 0
+        end
+    end)
+    return true
+end
+
+local function LagPlayer(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character then return false end
+    
+    for i = 1, 50 do
+        task.spawn(function()
+            pcall(function()
+                local hrp = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    local explosion = Instance.new("Explosion")
+                    explosion.Position = hrp.Position + Vector3.new(math.random(-10, 10), math.random(0, 5), math.random(-10, 10))
+                    explosion.BlastRadius = 20
+                    explosion.BlastPressure = 1000000
+                    explosion.Parent = Workspace
+                end
+            end)
+        end)
+    end
+    
+    for i = 1, 25 do
+        task.spawn(function()
+            local part = Instance.new("Part")
+            part.Size = Vector3.new(5, 5, 5)
+            part.Position = targetPlayer.Character.HumanoidRootPart.Position + Vector3.new(math.random(-20, 20), math.random(0, 10), math.random(-20, 20))
+            part.Anchored = false
+            part.CanCollide = true
+            part.Material = Enum.Material.Neon
+            part.Color = Color3.fromRGB(255, 0, 0)
+            part.Parent = Workspace
+            
+            local bodyVelocity = Instance.new("BodyVelocity")
+            bodyVelocity.Velocity = Vector3.new(math.random(-100, 100), math.random(50, 200), math.random(-100, 100))
+            bodyVelocity.MaxForce = Vector3.new(1e6, 1e6, 1e6)
+            bodyVelocity.Parent = part
+            
+            game:GetService("Debris"):AddItem(part, 5)
+        end)
+    end
+    
+    return true
+end
+
+local function CastigoPlayer(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character then return false end
+    
+    if CASTIGO_PLAYERS[targetPlayer.Name] then
+        local castigoData = CASTIGO_PLAYERS[targetPlayer.Name]
+        if castigoData.jailModel and castigoData.jailModel.Parent then
+            castigoData.jailModel:Destroy()
+        end
+        if castigoData.loop then
+            task.cancel(castigoData.loop)
+        end
+    end
+    
+    local hrp = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return false end
+    
+    local originalPosition = hrp.Position
+    CASTIGO_PLAYERS[targetPlayer.Name] = {
+        originalPosition = originalPosition,
+        jailModel = nil,
+        loop = nil
+    }
+    
+    local castigoPosition = Vector3.new(1159, 1727, 421)
+    local jailSize = 12
+    
+    local jailModel = Instance.new("Model", Workspace)
+    jailModel.Name = "Castigo_" .. targetPlayer.Name
+    
+    local parts = {
+        Base = Instance.new("Part", jailModel),
+        Roof = Instance.new("Part", jailModel),
+        Wall1 = Instance.new("Part", jailModel),
+        Wall2 = Instance.new("Part", jailModel),
+        Wall3 = Instance.new("Part", jailModel),
+        Wall4 = Instance.new("Part", jailModel)
+    }
+    
+    parts.Base.Size = Vector3.new(jailSize, 0.5, jailSize)
+    parts.Base.Position = castigoPosition - Vector3.new(0, 3, 0)
+    parts.Base.Anchored = true
+    parts.Base.CanCollide = true
+    parts.Base.Material = Enum.Material.Neon
+    parts.Base.Color = Color3.fromRGB(0, 150, 200)
+    parts.Base.Transparency = 0.3
+    
+    parts.Roof.Size = Vector3.new(jailSize, 0.5, jailSize)
+    parts.Roof.Position = parts.Base.Position + Vector3.new(0, jailSize, 0)
+    parts.Roof.Anchored = true
+    parts.Roof.CanCollide = true
+    parts.Roof.Material = Enum.Material.Neon
+    parts.Roof.Color = Color3.fromRGB(0, 150, 200)
+    parts.Roof.Transparency = 0.3
+    
+    local wallConfigs = {
+        {
+            size = Vector3.new(0.5, jailSize, jailSize),
+            position = parts.Base.Position + Vector3.new(jailSize / 2, jailSize / 2, 0)
+        },
+        {
+            size = Vector3.new(0.5, jailSize, jailSize),
+            position = parts.Base.Position + Vector3.new(-jailSize / 2, jailSize / 2, 0)
+        },
+        {
+            size = Vector3.new(jailSize, jailSize, 0.5),
+            position = parts.Base.Position + Vector3.new(0, jailSize / 2, jailSize / 2)
+        },
+        {
+            size = Vector3.new(jailSize, jailSize, 0.5),
+            position = parts.Base.Position + Vector3.new(0, jailSize / 2, -jailSize / 2)
+        }
+    }
+    
+    for i, config in ipairs(wallConfigs) do
+        local wall = parts["Wall" .. i]
+        wall.Size = config.size
+        wall.Position = config.position
+        wall.Anchored = true
+        wall.CanCollide = true
+        wall.Material = Enum.Material.Neon
+        wall.Color = Color3.fromRGB(0, 150, 200)
+        wall.Transparency = 0.3
+    end
+    
+    local imageId = "rbxassetid://7409940017"
+    
+    for partName, part in pairs(parts) do
+        local faces = {
+            Enum.NormalId.Front,
+            Enum.NormalId.Back,
+            Enum.NormalId.Left,
+            Enum.NormalId.Right,
+            Enum.NormalId.Top,
+            Enum.NormalId.Bottom
+        }
+        
+        for _, face in ipairs(faces) do
+            local decal = Instance.new("Decal", part)
+            decal.Face = face
+            decal.Texture = imageId
+            decal.Transparency = 0.1
+        end
+        
+        part.Material = Enum.Material.Plastic
+        part.Color = Color3.fromRGB(255, 255, 255)
+    end
+    
+    local centerPosition = parts.Base.Position + Vector3.new(0, jailSize / 2, 0)
+    hrp.CFrame = CFrame.new(centerPosition)
+    
+    local monitorLoop = task.spawn(function()
+        local center = parts.Base.Position + Vector3.new(0, jailSize / 2, 0)
+        while CASTIGO_PLAYERS[targetPlayer.Name] and targetPlayer.Parent and targetPlayer.Character and targetPlayer.Character.Parent do
+            local currentHrp = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if currentHrp and (currentHrp.Position - center).Magnitude > (jailSize / 2) - 1 then
+                currentHrp.CFrame = CFrame.new(center)
+            end
+            task.wait(0.1)
+        end
+    end)
+    
+    CASTIGO_PLAYERS[targetPlayer.Name].jailModel = jailModel
+    CASTIGO_PLAYERS[targetPlayer.Name].loop = monitorLoop
+    
+    return true
+end
+
+local function DescastigoPlayer(targetPlayer)
+    if not targetPlayer or not CASTIGO_PLAYERS[targetPlayer.Name] then return false end
+    
+    local castigoData = CASTIGO_PLAYERS[targetPlayer.Name]
+    
+    if castigoData.jailModel and castigoData.jailModel.Parent then
+        castigoData.jailModel:Destroy()
+    end
+    
+    if castigoData.loop then
+        task.cancel(castigoData.loop)
+    end
+    
+    if targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        targetPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(castigoData.originalPosition)
+    end
+    
+    CASTIGO_PLAYERS[targetPlayer.Name] = nil
+    
+    return true
+end
+
+local function CriarJumpscareLocal(imageId, audioId)
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "JumpscareFullscreen"
+    screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+    screenGui.DisplayOrder = 2147483647
+    screenGui.ResetOnSpawn = false
+    screenGui.IgnoreGuiInset = true
+    screenGui.Parent = CoreGui
+
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Size = UDim2.new(1, 0, 1, 0)
+    mainFrame.Position = UDim2.new(0, 0, 0, 0)
+    mainFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+    mainFrame.BorderSizePixel = 0
+    mainFrame.ZIndex = 2147483647
+    mainFrame.Parent = screenGui
+
+    local imageLabel = Instance.new("ImageLabel")
+    imageLabel.Size = UDim2.new(1, 0, 1, 0)
+    imageLabel.Position = UDim2.new(0, 0, 0, 0)
+    imageLabel.BackgroundTransparency = 1
+    imageLabel.Image = imageId
+    imageLabel.ScaleType = Enum.ScaleType.Fit
+    imageLabel.ZIndex = 2147483647
+    imageLabel.Parent = mainFrame
+
+    local sound = Instance.new("Sound")
+    sound.SoundId = audioId
+    sound.Volume = 2.0
+    sound.Looped = false
+    sound.Parent = mainFrame
+
+    local flashCount = 12
+    local flashInterval = 0.1
+
+    sound:Play()
+
+    UserInputService.MouseIconEnabled = false
+
+    task.spawn(function()
+        for i = 1, flashCount do
+            if not screenGui.Parent then break end
+            imageLabel.ImageTransparency = (i % 2 == 0) and 0.1 or 0
+            task.wait(flashInterval)
+        end
+        
+        imageLabel.ImageTransparency = 0
+        task.wait(0.8)
+        
+        local fadeTween = TweenService:Create(imageLabel, TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            ImageTransparency = 1
+        })
+        fadeTween:Play()
+        
+        local bgFadeTween = TweenService:Create(mainFrame, TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            BackgroundTransparency = 1
+        })
+        bgFadeTween:Play()
+        
+        task.wait(2)
+        
+        UserInputService.MouseIconEnabled = true
+        
+        screenGui:Destroy()
+    end)
+
+    return true
+end
+
+local function TheRakeJumpscare()
+    local SoundService = game:GetService("SoundService")
+    local CoreGui = game:GetService("CoreGui")
+    
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "FullJumpscare"
+    screenGui.IgnoreGuiInset = true
+    screenGui.ResetOnSpawn = false
+    screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    screenGui.DisplayOrder = 999999
+    screenGui.Parent = CoreGui
+    
+    local imageLabel = Instance.new("ImageLabel")
+    imageLabel.Size = UDim2.new(1.2, 0, 1.2, 0)
+    imageLabel.Position = UDim2.new(-0.1, 0, -0.1, 0)
+    imageLabel.BackgroundTransparency = 1
+    imageLabel.Image = "rbxassetid://108753859505348"
+    imageLabel.ZIndex = 999999
+    imageLabel.Parent = screenGui
+    
+    local sound1 = Instance.new("Sound")
+    sound1.SoundId = "rbxassetid://18967004856"
+    sound1.Volume = 10
+    sound1.Parent = SoundService
+    
+    local sound2 = Instance.new("Sound")
+    sound2.SoundId = "rbxassetid://103396125105301"
+    sound2.Volume = 10
+    sound2.Parent = SoundService
+    
+    local isShaking = true
+    
+    task.spawn(function()
+        while isShaking do
+            local offsetX = math.random(-10, 10)
+            local offsetY = math.random(-10, 10)
+            imageLabel.Position = UDim2.new(-0.1, offsetX, -0.1, offsetY)
+            task.wait(0.02)
+        end
+    end)
+    
+    imageLabel.Visible = true
+    sound1:Play()
+    
+    task.delay(2, function()
+        sound2:Play()
+        sound2.Ended:Connect(function()
+            isShaking = false
+            screenGui:Destroy()
+        end)
+    end)
+end
+
+local function TeleportToBackrooms()
+    local backroomsModel = game:GetObjects("rbxassetid://10581711055")[1]
+    backroomsModel.Parent = workspace
+    
+    for _, descendant in pairs(backroomsModel:GetDescendants()) do
+        if descendant:IsA("BasePart") then
+            descendant.Position = descendant.Position + Vector3.new(99999, 99999, 99999)
+        end
+    end
+    
+    local player = game.Players.LocalPlayer
+    if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        local targetPosition = backroomsModel.PrimaryPart.Position
+        player.Character.HumanoidRootPart.CFrame = CFrame.new(targetPosition.X, targetPosition.Y + 90, targetPosition.Z)
+        task.wait(2)
+        player.Character.HumanoidRootPart.CFrame = CFrame.new(targetPosition.X, targetPosition.Y + 90, targetPosition.Z)
+    end
+end
+
+local function SitPlayer(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character then return false end
+    local humanoid = targetPlayer.Character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid.Sit = true
+        return true
+    end
+    return false
+end
+
+local function LoopSitPlayer(targetPlayer)
+    if not targetPlayer then return false end
+    LOOP_SIT_PLAYERS[targetPlayer.Name] = true
+    
+    local function sitLoop()
+        while LOOP_SIT_PLAYERS[targetPlayer.Name] and targetPlayer and targetPlayer.Parent do
+            if targetPlayer.Character then
+                local humanoid = targetPlayer.Character:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    humanoid.Sit = true
+                end
+            end
+            task.wait(0.5)
+        end
+    end
+    
+    task.spawn(sitLoop)
+    return true
+end
+
+local function UnloopSitPlayer(targetPlayer)
+    if not targetPlayer then return false end
+    LOOP_SIT_PLAYERS[targetPlayer.Name] = nil
+    return true
+end
+
+local function FirePlayer(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character then return false end
+    local humanoid = targetPlayer.Character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        local fire = Instance.new("Fire")
+        fire.Parent = targetPlayer.Character:FindFirstChild("HumanoidRootPart") or targetPlayer.Character:FindFirstChild("Torso") or targetPlayer.Character:FindFirstChildWhichIsA("BasePart")
+        humanoid:TakeDamage(100)
+        return true
+    end
+    return false
+end
+
+local function LoopFirePlayer(targetPlayer)
+    if not targetPlayer then return false end
+    LOOP_FIRE_PLAYERS[targetPlayer.Name] = true
+    
+    local function fireLoop()
+        while LOOP_FIRE_PLAYERS[targetPlayer.Name] and targetPlayer and targetPlayer.Parent do
+            if targetPlayer.Character then
+                FirePlayer(targetPlayer)
+            end
+            task.wait(1)
+        end
+    end
+    
+    task.spawn(fireLoop)
+    return true
+end
+
+local function UnloopFirePlayer(targetPlayer)
+    if not targetPlayer then return false end
+    LOOP_FIRE_PLAYERS[targetPlayer.Name] = nil
+    return true
+end
+
+local function TransformIntoGoner()
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    
+    ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("ChangeCharacterBody"):InvokeServer(unpack({
+        {
+            116253341067642,
+            110703630520331,
+            119263803737569,
+            99234191703566,
+            99948897896884,
+            0
+        }
+    }))
+    
+    wait(3)
+    
+    local player = game.Players.LocalPlayer
+    local humanoid = (player.Character or player.CharacterAdded:Wait()):WaitForChild("Humanoid")
+    
+    local animation = Instance.new("Animation")
+    animation.AnimationId = "rbxassetid://4686925579"
+    humanoid:LoadAnimation(animation):Play()
+    
+    humanoid.WalkSpeed = 0
+    
+    wait(2)
+    
+    local function ApplyGonerAppearance()
+        local wearRemote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Wear")
+        
+        for _, accessory in ipairs(humanoid:GetAppliedDescription():GetAccessories(true)) do
+            if accessory.AssetId then
+                wearRemote:InvokeServer(unpack({tonumber(accessory.AssetId)}))
+            end
+        end
+        
+        task.wait()
+        
+        ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Wear"):InvokeServer(unpack({17771175724}))
+        ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Wear"):InvokeServer(unpack({17822722698}))
+        ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Wear"):InvokeServer(unpack({17822749561}))
+        ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Wear"):InvokeServer(unpack({17772174303}))
+        ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Wear"):InvokeServer(unpack({17770317484}))
+        ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Wear"):InvokeServer(unpack({4586060885}))
+        ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Wear"):InvokeServer(unpack({6913613757}))
+        
+        ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("ChangeBodyColor"):FireServer(unpack({"Really black"}))
+        
+        wait(0.1)
+        ReplicatedStorage.Remotes.ApplyEmmiter:InvokeServer(18635845425, "087SmokeBlack")
+    end
+    
+    wait(0.1)
+    
+    local backpack = game.Players.LocalPlayer.Backpack
+    local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+    
+    local punchTool = Instance.new("Tool")
+    punchTool.Name = "Soco"
+    punchTool.RequiresHandle = true
+    punchTool.CanBeDropped = false
+    punchTool.Parent = backpack
+    
+    local handle = Instance.new("Part")
+    handle.Name = "Handle"
+    handle.Size = Vector3.new(1, 1, 1)
+    handle.Transparency = 1
+    handle.CanCollide = false
+    handle.Anchored = false
+    handle.Parent = punchTool
+    
+    punchTool.Equipped:Connect(function()
+        punchTool.Activated:Connect(function()
+            local characterHumanoid = character:FindFirstChildOfClass("Humanoid")
+            if not characterHumanoid then return end
+            
+            local animator = characterHumanoid:FindFirstChild("Animator")
+            if not animator then
+                animator = Instance.new("Animator")
+                animator.Parent = characterHumanoid
+            end
+            
+            local punchAnimation = Instance.new("Animation")
+            punchAnimation.AnimationId = "rbxassetid://846744780"
+            
+            local animationTrack = animator:LoadAnimation(punchAnimation)
+            animationTrack.Looped = false
+            animationTrack:Play()
+        end)
+    end)
+    
+    local soundTools = {
+        {name = "Som 1", soundId = 2291326370},
+        {name = "Som 2", soundId = 2316600989},
+        {name = "Som 3", soundId = 2316601464},
+        {name = "Som 4", soundId = 2291325961},
+        {name = "Som 5", soundId = 2290634374},
+        {name = "Som 6", soundId = 2737898305},
+        {name = "Som 7", soundId = 2291326656}
+    }
+    
+    for _, soundData in ipairs(soundTools) do
+        local soundTool = Instance.new("Tool")
+        soundTool.Name = soundData.name
+        soundTool.RequiresHandle = false
+        soundTool.Parent = backpack
+    
+        soundTool.Equipped:Connect(function()
+            ReplicatedStorage.RE:FindFirstChild("1Gu1nSound1s"):FireServer(unpack({
+                workspace,
+                soundData.soundId,
+                1
+            }))
+            
+            local sound = Instance.new("Sound")
+            sound.SoundId = "rbxassetid://" .. soundData.soundId
+            sound.Parent = workspace
+            sound.Volume = 0.3
+            sound.PlaybackSpeed = 1
+            sound:Play()
+            
+            game:GetService("Debris"):AddItem(sound, 3)
+        end)
+    end
+    
+    ApplyGonerAppearance()
+    
+    wait(1)
+    
+    local resetHumanoid = (player.Character or player.CharacterAdded:Wait()):WaitForChild("Humanoid")
+    
+    for _, track in pairs(resetHumanoid:GetPlayingAnimationTracks()) do
+        track:Stop()
+    end
+    
+    resetHumanoid.WalkSpeed = 16
+    
+    wait(0.1)
+    
+    game.Players.LocalPlayer.CharacterAdded:Connect(function(newCharacter)
+        local newHumanoid = newCharacter:WaitForChild("Humanoid")
+        ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("ResetCharacterAppearance"):FireServer()
+        ReplicatedStorage.Remotes.ApplyEmmiter:InvokeServer(unpack({18610639786, "0001Remove"}))
+    end)
+    
+    task.wait()
+    loadstring(game:HttpGet("https://github.com/contateste8/R6Convert/raw/refs/heads/main/R6Converter.txt"))()
+end
+
+local function FloppaRain()
+    local sky = Instance.new("Sky")
+    sky.SkyboxBk = "rbxassetid://123446364161879"
+    sky.SkyboxDn = "rbxassetid://123446364161879"
+    sky.SkyboxFt = "rbxassetid://123446364161879"
+    sky.SkyboxLf = "rbxassetid://123446364161879"
+    sky.SkyboxRt = "rbxassetid://123446364161879"
+    sky.SkyboxUp = "rbxassetid://123446364161879"
+    sky.Parent = game.Lighting
+    
+    local function PlayLoopingSound()
+        local sound = Instance.new("Sound")
+        sound.SoundId = "rbxassetid://8772968188"
+        sound.Volume = 1
+        sound.Parent = workspace
+        
+        local function PlaySound()
+            sound:Play()
+        end
+        
+        while true do
+            PlaySound()
+            task.wait(5)
+        end
+    end
+    
+    coroutine.resume(coroutine.create(PlayLoopingSound))
+    
+    task.wait(1)
+    
+    local floppaTemplate = Instance.new("Part")
+    floppaTemplate.Size = Vector3.new(2, 2, 2)
+    floppaTemplate.Anchored = false
+    floppaTemplate.CanCollide = true
+    
+    local textureId = "rbxassetid://123446364161879"
+    local spawnHeight = 100
+    local spawnInterval = 0.05
+    local spawnArea = 500
+    local floppasPerSpawn = 10
+    
+    local function ApplyFloppaTexture(part)
+        for _, faceName in pairs({"Front", "Back", "Left", "Right", "Top", "Bottom"}) do
+            local decal = Instance.new("Decal")
+            decal.Texture = textureId
+            decal.Face = Enum.NormalId[faceName]
+            decal.Parent = part
+        end
+    end
+    
+    local function OnFloppaTouch(part)
+        part.Touched:Connect(function(hit)
+            local humanoid = hit.Parent:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid:TakeDamage(10)
+            end
+        end)
+    end
+    
+    local function SpawnFloppas()
+        for i = 1, floppasPerSpawn do
+            local floppa = floppaTemplate:Clone()
+            floppa.Position = Vector3.new(
+                math.random(-spawnArea / 2, spawnArea / 2),
+                spawnHeight,
+                math.random(-spawnArea / 2, spawnArea / 2)
+            )
+            ApplyFloppaTexture(floppa)
+            OnFloppaTouch(floppa)
+            floppa.Parent = workspace
+        end
+    end
+    
+    while true do
+        SpawnFloppas()
+        task.wait(spawnInterval)
+    end
+end
+
+local verificacaoEmAndamento = false
+
+local function ProcessarMensagem(msgText, authorName)
+    if not msgText or not authorName then return end
+
+    local comandoLower = msgText:lower()  
+    local character = LocalPlayer.Character  
+    local humanoid = character and character:FindFirstChildOfClass("Humanoid")  
+
+    if EImune(LocalPlayer.Name) then
+        return
+    end
+
+    local targetLower = LocalPlayer.Name:lower()
+    
+    if comandoLower:match("/kill%s+" .. targetLower) then  
+        KillPlayer(LocalPlayer)
+    end
+
+    if comandoLower:match("/kick%s+" .. targetLower) then  
+        local reason = comandoLower:match("/kick%s+" .. targetLower .. "%s+(.+)")
+        KickPlayer(LocalPlayer, reason)
+    end
+    
+    if comandoLower:match("/jail invisible%s+" .. targetLower) then  
+        InvisibleJailPlayer(LocalPlayer)
+    end
+
+    if comandoLower:match("/unjail invisible%s+" .. targetLower) then  
+        InvisibleUnjailPlayer(LocalPlayer)
+    end
+    
+    if comandoLower:match("/explode%s+" .. targetLower) then  
+        ExplodirPlayer(LocalPlayer)
+    end
+
+    if comandoLower:match("/loopkill%s+" .. targetLower) then  
+        LoopKillPlayer(LocalPlayer)
+    end
+
+    if comandoLower:match("/unloopkill%s+" .. targetLower) then  
+        UnloopKillPlayer(LocalPlayer)
+    end
+
+    if comandoLower:match("/bring%s+" .. targetLower) then  
+        local commander = Players:FindFirstChild(authorName)
+        if commander then
+            BringPlayer(LocalPlayer, commander)
+        end
+    end
+
+    if comandoLower:match("/loopbring%s+" .. targetLower) then  
+        local commander = Players:FindFirstChild(authorName)
+        if commander then
+            LoopBringPlayer(LocalPlayer, commander)
+        end
+    end
+
+    if comandoLower:match("/unloopbring%s+" .. targetLower) then  
+        UnloopBringPlayer(LocalPlayer)
+    end
+
+    if comandoLower:match("/tptroll%s+" .. targetLower) then  
+        TPTrollPlayer(LocalPlayer)
+    end
+
+    if comandoLower:match("/float%s+" .. targetLower) then  
+        FloatPlayer(LocalPlayer)
+    end
+
+    if comandoLower:match("/lag%s+" .. targetLower) then  
+        LagPlayer(LocalPlayer)
+    end
+
+    if comandoLower:match("/backrooms%s+" .. targetLower) then
+        TeleportToBackrooms()
+    end
+
+    if comandoLower:match("/fling%s+" .. targetLower) then  
+        if character then  
+            local root = character:FindFirstChild("HumanoidRootPart")  
+            if root then  
+                local tween = TweenService:Create(root, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = CFrame.new(0,100000,0)})  
+                tween:Play()  
+            end  
+        end  
+    end  
+
+    if comandoLower:match("/freeze%s+" .. targetLower) then  
+        if humanoid then  
+            playerOriginalSpeed[LocalPlayer] = humanoid.WalkSpeed
+            humanoid.WalkSpeed = 0  
+        end  
+    end  
+
+    if comandoLower:match("/unfreeze%s+" .. targetLower) then  
+        if humanoid then  
+            humanoid.WalkSpeed = playerOriginalSpeed[LocalPlayer] or 16  
+        end  
+    end
+
+    if comandoLower:match("/castigo%s+" .. targetLower) then  
+        CastigoPlayer(LocalPlayer)
+    end
+
+    if comandoLower:match("/descastigo%s+" .. targetLower) then  
+        DescastigoPlayer(LocalPlayer)
+    end
+
+    if comandoLower:match("/jumps1%s+" .. targetLower) then  
+        CriarJumpscareLocal("rbxassetid://126754882337711", "rbxassetid://138873214826309")
+    end
+
+    if comandoLower:match("/jumps2%s+" .. targetLower) then  
+        CriarJumpscareLocal("rbxassetid://86379969987314", "rbxassetid://143942090")
+    end
+
+    if comandoLower:match("/jumps3%s+" .. targetLower) then  
+        CriarJumpscareLocal("rbxassetid://127382022168206", "rbxassetid://143942090")
+    end
+
+    if comandoLower:match("/jumps4%s+" .. targetLower) then  
+        CriarJumpscareLocal("rbxassetid://95973611964555", "rbxassetid://138873214826309")
+    end
+
+    if comandoLower:match("/therakejumpscare%s+" .. targetLower) then  
+        TheRakeJumpscare()
+    end
+
+    if comandoLower:match("/sit%s+" .. targetLower) then  
+        SitPlayer(LocalPlayer)
+    end
+
+    if comandoLower:match("/loopsit%s+" .. targetLower) then  
+        LoopSitPlayer(LocalPlayer)
+    end
+
+    if comandoLower:match("/unloopsit%s+" .. targetLower) then  
+        UnloopSitPlayer(LocalPlayer)
+    end
+
+    if comandoLower:match("/fire%s+" .. targetLower) then  
+        FirePlayer(LocalPlayer)
+    end
+
+    if comandoLower:match("/loopfire%s+" .. targetLower) then  
+        LoopFirePlayer(LocalPlayer)
+    end
+
+    if comandoLower:match("/unloopfire%s+" .. targetLower) then  
+        UnloopFirePlayer(LocalPlayer)
+    end
+    
+    
+    if comandoLower:match("/flopparain%s+" .. targetLower) then  
+        FloppaRain()
+    end
+
+    if comandoLower:match("^/verifique$") and not verificacaoEmAndamento then  
+        verificacaoEmAndamento = true
+        
+        if authorName ~= LocalPlayer.Name then
+            task.wait(1)
+            local canal = TextChatService.TextChannels:FindFirstChild("RBXGeneral") or TextChatService.TextChannels:GetChildren()[1]  
+            if canal then  
+                local randomCode = tostring(math.random(1000, 9999))
+                canal:SendAsync("Xtn_Users" .. randomCode)  
+            end  
+        end
+        
+        verificacaoEmAndamento = false
+    end
+
+    if msgText:match("[Ll]yra_%d%d%d%d") then  
+        if not LYRA_USERS[authorName] then
+            LYRA_USERS[authorName] = true
+            AtualizarTagPorNome(authorName)
+        end
+    end
+end
+
+local function ConectarCanal(canal)
+    if not canal or not canal.IsA then return end
+    if not canal:IsA("TextChannel") then return end
+    canal.MessageReceived:Connect(function(msg)
+        local text = msg.Text
+        local source = msg.TextSource and msg.TextSource.Name
+        if text and source then
+            ProcessarMensagem(text, source)
+        end
+    end)
+end
+
+for _, ch in pairs(TextChatService.TextChannels:GetChildren()) do
+    ConectarCanal(ch)
+end
+
+TextChatService.TextChannels.ChildAdded:Connect(function(ch)
+    ConectarCanal(ch)
+end)
+
+local ok, WindUI = pcall(function()
+    return loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+end)
+
+if ok and WindUI then
+    local playerName = LocalPlayer.Name
+    if TemCargo(playerName) or LYRA_USERS[playerName] then
+        
+        WindUI:AddTheme({
+            Name = "BlackWhite Theme",
+            
+            Background = Color3.fromRGB(0, 0, 0),
+            WindowBackground = Color3.fromRGB(0, 0, 0),
+            DialogBackground = Color3.fromRGB(0, 0, 0),
+            TabBackground = Color3.fromRGB(0, 0, 0),
+            ElementBackground = Color3.fromRGB(0, 0, 0),
+            PopupBackground = Color3.fromRGB(0, 0, 0),
+            
+    Accent = Color3.fromRGB(255, 255, 255),
+    Outline = Color3.fromRGB(255, 255, 255),
+    Text = Color3.fromRGB(255, 255, 255),
+    Placeholder = Color3.fromRGB(200, 200, 200),
+    Button = Color3.fromRGB(0, 0, 0),
+    Icon = Color3.fromRGB(255, 255, 255),
+    
+    BackgroundTransparency = 0.1,
+    Hover = Color3.fromRGB(30, 30, 30),
+    WindowShadow = Color3.fromRGB(0, 0, 0),
+    
+    DialogBackgroundTransparency = 0.1,
+    DialogTitle = Color3.fromRGB(255, 255, 255),
+    DialogContent = Color3.fromRGB(255, 255, 255),
+    DialogIcon = Color3.fromRGB(255, 255, 255),
+    
+    WindowTopbarButtonIcon = Color3.fromRGB(255, 255, 255),
+    WindowTopbarTitle = Color3.fromRGB(255, 255, 255),
+    WindowTopbarAuthor = Color3.fromRGB(255, 255, 255),
+    WindowTopbarIcon = Color3.fromRGB(255, 255, 255),
+    
+    TabTitle = Color3.fromRGB(255, 255, 255),
+    TabIcon = Color3.fromRGB(255, 255, 255),
+    
+    ElementTitle = Color3.fromRGB(255, 255, 255),
+    ElementDesc = Color3.fromRGB(255, 255, 255),
+    ElementIcon = Color3.fromRGB(255, 255, 255),
+    
+    PopupBackgroundTransparency = 0.1,
+    PopupTitle = Color3.fromRGB(255, 255, 255),
+    PopupContent = Color3.fromRGB(255, 255, 255),
+    PopupIcon = Color3.fromRGB(255, 255, 255),
+    
+    DialogButton = Color3.fromRGB(0, 0, 0),
+    DialogButtonText = Color3.fromRGB(255, 255, 255),
+    DialogButtonHover = Color3.fromRGB(20, 20, 20),
+    
+    PopupButton = Color3.fromRGB(0, 0, 0),
+    PopupButtonText = Color3.fromRGB(255, 255, 255),
+    PopupButtonHover = Color3.fromRGB(20, 20, 20)
+        })
+
+        WindUI:Gradient({
+            ["0"] = { Color = Color3.fromRGB(0, 0, 0), Transparency = 0.1 },
+            ["100"] = { Color = Color3.fromRGB(0, 0, 0), Transparency = 0.3 },
+        }, {
+            Rotation = 0,
+        })
+
+        WindUI:SetTheme("BlackWhite Theme")
+
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        local userId = LocalPlayer.UserId
+        
+        local thumbType = Enum.ThumbnailType.HeadShot
+        local thumbSize = Enum.ThumbnailSize.Size150x150
+        local content, isReady = Players:GetUserThumbnailAsync(userId, thumbType, thumbSize)
+        
+        local Window = WindUI:CreateWindow({
+            Title = "XTN HUB ADMIN ",
+            Icon = "shield",
+            Author = "By vxry",
+            Folder = "Meuvxry",
+            
+            Size = UDim2.fromOffset(580, 460),
+            MinSize = Vector2.new(560, 350),
+            MaxSize = Vector2.new(850, 560),
+            Transparent = true,
+            Theme = "BlackWhite Theme",
+            Resizable = true,
+            SideBarWidth = 200,
+            BackgroundImageTransparency = 0.15,
+            HideSearchBar = true,
+            ScrollBarEnabled = false,
+            
+            Background = "rbxassetid://131501427269730",
+            
+            User = {
+                Enabled = true,
+                Anonymous = false,
+                Title = LocalPlayer.Name,
+                Avatar = content,
+                Callback = function()
+                    Window:Dialog({
+                        Icon = "user",
+                        Title = "Perfil do Usuário",
+                        Content = "Nome: " .. LocalPlayer.Name .. "\nID: " .. userId .. "\n\nCargo: " .. (TemCargo(playerName) and "Admin" or "Usuário Lyra"),
+                        Buttons = {
+                            {
+                                Title = "OK",
+                                Callback = function()
+                                end,
+                            },
+                        },
+                    }):Show()
+                end,
+            },
+        })
+
+        Window:SetToggleKey(Enum.KeyCode.H)
+        Window:ToggleTransparency(true)
+        Window:IsResizable(true)
+
+        Window:EditOpenButton({
+            Title = "Open Painel Admin {xtn}",
+            Icon = "shield",
+            CornerRadius = UDim.new(0, 16),
+            StrokeThickness = 2,
+            Color = ColorSequence.new(
+                Color3.fromRGB(255, 0, 0),
+                Color3.fromRGB(255, 255, 255)
+            ),
+            OnlyMobile = false,
+            Enabled = true,
+            Draggable = true,
+        })
+
+        local function getPlayersList()
+            local players = {}
+            for _, player in ipairs(Players:GetPlayers()) do
+                local playerName = player.Name
+                if player == LocalPlayer then
+                    playerName = playerName .. " (Você)"
+                end
+                table.insert(players, playerName)
+            end
+            table.sort(players)
+            return players
+        end
+
+        local dropdownsToUpdate = {}
+        local isUpdatingDropdowns = false
+
+        local function setupDropdownAutoUpdate()
+            local function updateAllDropdowns()
+                if isUpdatingDropdowns then return end
+                isUpdatingDropdowns = true
+                
+                local success, playerList = pcall(function()
+                    return getPlayersList()
+                end)
+                
+                if success and playerList then
+                    for _, dropdown in ipairs(dropdownsToUpdate) do
+                        if dropdown and dropdown.SetValues then
+                            pcall(function()
+                                dropdown:SetValues(playerList)
+                            end)
+                        end
+                    end
+                end
+                
+                isUpdatingDropdowns = false
+            end
+            
+            local updateLoop = task.spawn(function()
+                while true do
+                    updateAllDropdowns()
+                    task.wait(5)
+                end
+            end)
+            
+            Players.PlayerAdded:Connect(function(player)
+                task.wait(0.5)
+                updateAllDropdowns()
+            end)
+            
+            Players.PlayerRemoving:Connect(function(player)
+                updateAllDropdowns()
+            end)
+            
+            return updateAllDropdowns
+        end
+
+        local updateDropdownsFunction = setupDropdownAutoUpdate()
+
+        local TabComandos = Window:Tab({ Title = "Commandos", Icon = "terminal", Locked = false })  
+        local Section = TabComandos:Section({ Title = "Admin", Icon = "user-cog", Opened = true })  
+
+        local TargetName  
+        local Dropdown = Section:Dropdown({  
+            Title = "Selecionar Jogador",  
+            Values = getPlayersList(),  
+            Value = "",  
+            Callback = function(opt) 
+                if opt then
+                    TargetName = opt:gsub(" %(Você%)", "")
+                end
+            end  
+        })  
+
+        table.insert(dropdownsToUpdate, Dropdown)
+
+        local TabJumpscare = Window:Tab({ Title = "Jumpscare", Icon = "skull", Locked = false })
+        local SectionJumpscare = TabJumpscare:Section({ Title = "Jumpscares Terror", Icon = "ghost", Opened = true })
+
+        local JumpscareTargetName
+        local JumpscareDropdown = SectionJumpscare:Dropdown({  
+            Title = "Selecionar Jogador",  
+            Values = getPlayersList(),  
+            Value = "",  
+            Callback = function(opt) 
+                if opt then
+                    JumpscareTargetName = opt:gsub(" %(Você%)", "")
+                end
+            end  
+        })
+
+        table.insert(dropdownsToUpdate, JumpscareDropdown)
+
+        task.spawn(function()
+            task.wait(1)
+            local playerList = getPlayersList()
+            Dropdown:SetValues(playerList)
+            JumpscareDropdown:SetValues(playerList)
+        end)
+
+        local comandos = { 
+            "kill", "kick",
+            "jail invisible", "unjail invisible", "fling", "backrooms", "freeze", "unfreeze", 
+            "explode", "bring", "tptroll", "float", "lag", "castigo", "descastigo",
+            "loopkill", "unloopkill", "loopbring", "unloopbring",
+            "flopparain", "sit", "loopsit", "unloopsit", 
+            "fire", "loopfire", "unloopfire"
+        }  
+        
+        for _, cmd in ipairs(comandos) do  
+            Section:Button({  
+                Title = "/" .. cmd:lower(),  
+                Desc = "Comando: /"..cmd.." [jogador]",
+                Callback = function()  
+                    if TargetName and TargetName ~= "" then  
+                        local podeUsar = PodeUsarComando(LocalPlayer.Name, TargetName)
+                        if not podeUsar then
+                            return
+                        end
+                        EnviarComando(cmd, TargetName)  
+                    end
+                end  
+            })  
+        end
+
+        Section:Space()
+        Section:Button({  
+            Title = "/verifique",  
+            Desc = "Comando: /verifique -  Outros usuário do Xtn hub Manda Xtn_Users",
+            Callback = function()  
+                EnviarComando("verifique")
+            end  
+        })
+
+        local jumpscares = {
+            { name = "jumps1", desc = "Jumpscare 1 - Imagem assustadora" },
+            { name = "jumps2", desc = "Jumpscare 2 - Terror clássico" },
+            { name = "jumps3", desc = "Jumpscare 3 - Sustos intensos" },
+            { name = "jumps4", desc = "Jumpscare 4 - Horror máximo" },
+            { name = "therakejumpscare", desc = "The Rake Jumpscare" }
+        }
+
+        for _, jumpscare in ipairs(jumpscares) do
+            SectionJumpscare:Button({  
+                Title = "/" .. jumpscare.name,
+                Desc = jumpscare.desc,
+                Callback = function()  
+                    if JumpscareTargetName and JumpscareTargetName ~= "" then  
+                        local podeUsar = PodeUsarComando(LocalPlayer.Name, JumpscareTargetName)
+                        if not podeUsar then
+                            return
+                        end
+                        EnviarComando(jumpscare.name, JumpscareTargetName)  
+                    end
+                end  
+            })
+        end
+    end
+end
+
+LYRA_USERS[LocalPlayer.Name] = true
+
+local sound = Instance.new("Sound")
+sound.SoundId = "rbxassetid://8486683243"
+sound.Volume = 0.5
+sound.PlayOnRemove = true
+sound.Parent = Workspace
+sound:Destroy()
